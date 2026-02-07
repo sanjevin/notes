@@ -94,9 +94,29 @@
         .yaml-key { color: #3b82f6; font-weight: bold; }
         .yaml-val { color: #10b981; }
         .docker-instruction { color: #db2777; font-weight: bold; }
+
+        /* Dark Mode overrides */
+        .dark-mode {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        .dark-mode header {
+            background-color: #1e293b;
+            border-color: #334155;
+        }
+        .dark-mode header h1 { color: #f1f5f9; }
+        .dark-mode #content-area { background-color: #0f172a; }
+        .dark-mode .bg-white { background-color: #1e293b; border-color: #334155; }
+        .dark-mode .text-slate-800 { color: #f1f5f9; }
+        .dark-mode .text-slate-600 { color: #cbd5e1; }
+        .dark-mode .bg-slate-50 { background-color: #1e293b; }
+        .dark-mode .bg-blue-50 { background-color: #1e3a8a; color: #dbeafe; }
+        .dark-mode .bg-slate-100 { background-color: #334155; }
+        .dark-mode .border-slate-200 { border-color: #334155; }
+        .dark-mode .text-blue-900 { color: #dbeafe; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden transition-colors duration-300">
 
     <!-- Header -->
     <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm z-10 shrink-0">
@@ -108,8 +128,8 @@
         </div>
         <div class="flex items-center gap-4">
             <span class="text-xs text-slate-500 font-medium uppercase tracking-wider hidden sm:block">Interview Ready Mode</span>
-            <button onclick="toggleTheme()" class="text-slate-400 hover:text-blue-600 transition-colors">
-                <i class="fa-solid fa-lightbulb"></i>
+            <button onclick="toggleTheme()" class="text-slate-400 hover:text-blue-600 transition-colors p-2" title="Toggle Dark/Light Mode">
+                <i class="fa-solid fa-circle-half-stroke text-xl"></i>
             </button>
         </div>
     </header>
@@ -165,7 +185,6 @@
                 summary: "Docker is a platform for developing, shipping, and running applications in containers. It solves the 'it works on my machine' problem by bundling code and dependencies.",
                 details: `
                     <div class="space-y-8">
-                        <!-- Introduction Block -->
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                             <h3 class="text-lg font-bold text-blue-600 mb-4">Why Docker? The VM vs Container Battle</h3>
                             <p class="mb-4 text-slate-600">Before Docker, we used Virtual Machines (VMs). VMs simulate entire hardware and run a full OS kernel for each app, which is heavy. Containers share the host OS kernel and isolate the application process, making them lightweight and fast.</p>
@@ -193,29 +212,25 @@
                             </div>
                         </div>
 
-                        <!-- Architecture Interactive -->
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                             <h3 class="text-lg font-bold text-blue-600 mb-2">Docker Architecture</h3>
-                            <p class="mb-6 text-slate-600 text-sm">Hover over the components to understand the flow.</p>
+                            <p class="mb-6 text-slate-600 text-sm">Understand the data flow between components.</p>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <!-- Client -->
-                                <div class="concept-block group p-4 bg-slate-50 border-2 border-slate-200 rounded-lg hover:border-blue-500 cursor-pointer">
+                                <div class="concept-block group p-4 bg-slate-50 border-2 border-slate-200 rounded-lg hover:border-blue-500">
                                     <div class="text-center mb-2"><i class="fa-solid fa-terminal text-3xl text-slate-400 group-hover:text-blue-500"></i></div>
                                     <h4 class="font-bold text-center mb-2">Client (CLI)</h4>
-                                    <p class="text-xs text-slate-500">Where you type commands (<code>docker build</code>, <code>docker pull</code>). Interacts with the Daemon via REST API.</p>
+                                    <p class="text-xs text-slate-500">The primary way users interact with Docker. Commands like 'build' or 'run' are sent to the Daemon.</p>
                                 </div>
-                                <!-- Host -->
-                                <div class="concept-block group p-4 bg-slate-50 border-2 border-slate-200 rounded-lg hover:border-blue-500 cursor-pointer">
+                                <div class="concept-block group p-4 bg-slate-50 border-2 border-slate-200 rounded-lg hover:border-blue-500">
                                     <div class="text-center mb-2"><i class="fa-solid fa-gears text-3xl text-slate-400 group-hover:text-blue-500"></i></div>
                                     <h4 class="font-bold text-center mb-2">Docker Host (Daemon)</h4>
-                                    <p class="text-xs text-slate-500">The background process (dockerd). Listens for requests, manages objects (images, containers, networks).</p>
+                                    <p class="text-xs text-slate-500">The core engine (dockerd). Manages Docker objects like images, containers, networks, and volumes.</p>
                                 </div>
-                                <!-- Registry -->
-                                <div class="concept-block group p-4 bg-slate-50 border-2 border-slate-200 rounded-lg hover:border-blue-500 cursor-pointer">
+                                <div class="concept-block group p-4 bg-slate-50 border-2 border-slate-200 rounded-lg hover:border-blue-500">
                                     <div class="text-center mb-2"><i class="fa-solid fa-cloud text-3xl text-slate-400 group-hover:text-blue-500"></i></div>
                                     <h4 class="font-bold text-center mb-2">Registry</h4>
-                                    <p class="text-xs text-slate-500">Stores images (e.g., Docker Hub). <code>docker pull</code> fetches from here.</p>
+                                    <p class="text-xs text-slate-500">A storage system for Docker images. Docker Hub is the default public registry.</p>
                                 </div>
                             </div>
                         </div>
@@ -227,315 +242,93 @@
                 summary: "An Image is a read-only template used to create containers. It is built from layers defined in a Dockerfile.",
                 details: `
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Dockerfile Anatomy -->
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                             <h3 class="font-bold text-blue-600 mb-4">The Dockerfile Anatomy</h3>
                             <div class="bg-slate-900 text-slate-300 p-4 rounded font-mono text-sm leading-relaxed">
-                                <div class="mb-2 group hover:bg-slate-800 p-1 rounded cursor-help" title="Base Image: The OS foundation">
-                                    <span class="docker-instruction">FROM</span> node:14 <span class="text-slate-500">// Start with OS + Node</span>
-                                </div>
-                                <div class="mb-2 group hover:bg-slate-800 p-1 rounded cursor-help" title="Workdir: Sets the context inside the container">
-                                    <span class="docker-instruction">WORKDIR</span> /app <span class="text-slate-500">// Set folder inside container</span>
-                                </div>
-                                <div class="mb-2 group hover:bg-slate-800 p-1 rounded cursor-help" title="Copy: Moves files from Host to Container">
-                                    <span class="docker-instruction">COPY</span> package.json . <span class="text-slate-500">// Layer Caching optimization!</span>
-                                </div>
-                                <div class="mb-2 group hover:bg-slate-800 p-1 rounded cursor-help" title="Run: Executes commands during BUILD time">
-                                    <span class="docker-instruction">RUN</span> npm install <span class="text-slate-500">// Install dependencies</span>
-                                </div>
-                                <div class="mb-2 group hover:bg-slate-800 p-1 rounded cursor-help" title="Copy Source: Copies the rest of the code">
-                                    <span class="docker-instruction">COPY</span> . . 
-                                </div>
-                                <div class="mb-2 group hover:bg-slate-800 p-1 rounded cursor-help" title="CMD: The command to run when container STARTS">
-                                    <span class="docker-instruction">CMD</span> ["node", "app.js"] 
-                                </div>
+                                <div class="mb-2"><span class="docker-instruction">FROM</span> node:14</div>
+                                <div class="mb-2"><span class="docker-instruction">WORKDIR</span> /app</div>
+                                <div class="mb-2"><span class="docker-instruction">COPY</span> package.json .</div>
+                                <div class="mb-2"><span class="docker-instruction">RUN</span> npm install</div>
+                                <div class="mb-2"><span class="docker-instruction">COPY</span> . . </div>
+                                <div class="mb-2"><span class="docker-instruction">CMD</span> ["node", "app.js"] </div>
                             </div>
-                            <p class="mt-4 text-xs text-slate-500 italic"><i class="fa-solid fa-circle-info"></i> Tip: Order matters! COPY package.json before source code to utilize layer caching.</p>
+                            <p class="mt-4 text-xs text-slate-500 italic"><i class="fa-solid fa-circle-info"></i> Tip: Use separate layers for dependencies to optimize caching.</p>
                         </div>
 
-                        <!-- Key Concepts -->
                         <div class="space-y-4">
                             <div class="bg-blue-50 p-4 rounded-l-4 border-l-4 border-blue-500">
                                 <h4 class="font-bold text-slate-800">Layers & Caching</h4>
-                                <p class="text-sm text-slate-600 mt-1">Images are built in layers. If you change a line in your code, Docker only rebuilds layers from that point down. This is why we copy dependencies separate from source code.</p>
+                                <p class="text-sm text-slate-600 mt-1">Images are read-only stacks of layers. Each Dockerfile instruction creates a new layer.</p>
                             </div>
                             <div class="bg-purple-50 p-4 rounded-l-4 border-l-4 border-purple-500">
                                 <h4 class="font-bold text-slate-800">.dockerignore</h4>
-                                <p class="text-sm text-slate-600 mt-1">Just like .gitignore. Prevents unnecessary files (like node_modules, .git, secrets) from being copied into the image context, keeping images small.</p>
-                            </div>
-                            <div class="bg-green-50 p-4 rounded-l-4 border-l-4 border-green-500">
-                                <h4 class="font-bold text-slate-800">Tags</h4>
-                                <p class="text-sm text-slate-600 mt-1">Versions of an image. <code>node:14</code> vs <code>node:latest</code>. Always use specific tags in production to avoid breaking changes.</p>
+                                <p class="text-sm text-slate-600 mt-1">Excludes files from the build context (like node_modules or .git) to keep images slim.</p>
                             </div>
                         </div>
                     </div>
                 `
             },
             containers: {
-                title: "Container Lifecycle & Basic Commands",
+                title: "Container Lifecycle",
                 summary: "A container is a runnable instance of an image. It is ephemeral by default.",
                 details: `
                     <div class="space-y-6">
-                        <!-- Lifecycle Flow -->
-                        <div class="flex flex-wrap items-center justify-between bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-sm">
-                            <div class="text-center px-4">
-                                <div class="font-bold mb-1">Image</div>
-                                <div class="text-2xl text-slate-400"><i class="fa-regular fa-file-code"></i></div>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-slate-300"></i>
-                            <div class="text-center px-4">
-                                <div class="font-bold mb-1">Create</div>
-                                <div class="text-xs text-slate-500">docker create</div>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-slate-300"></i>
-                            <div class="text-center px-4 text-green-600">
-                                <div class="font-bold mb-1">Running</div>
-                                <div class="text-xs">docker start / run</div>
-                                <div class="text-2xl mt-1"><i class="fa-solid fa-gear fa-spin"></i></div>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-slate-300"></i>
-                            <div class="text-center px-4 text-orange-500">
-                                <div class="font-bold mb-1">Stopped</div>
-                                <div class="text-xs">docker stop</div>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-slate-300"></i>
-                            <div class="text-center px-4 text-red-500">
-                                <div class="font-bold mb-1">Deleted</div>
-                                <div class="text-xs">docker rm</div>
-                                <div class="text-2xl mt-1"><i class="fa-solid fa-trash-can"></i></div>
-                            </div>
-                        </div>
-
-                        <!-- Interactive Terminal Simulator -->
                         <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                             <h3 class="font-bold text-blue-600 mb-4">Command Lab</h3>
-                            <p class="text-sm text-slate-600 mb-4">Try these commands: <code>docker run hello-world</code>, <code>docker ps</code>, <code>docker images</code></p>
-                            
+                            <p class="text-sm text-slate-600 mb-4">Try: <code>docker run hello-world</code> or <code>docker ps</code></p>
                             <div class="terminal-window p-4 h-64 overflow-y-auto" id="terminalOutput">
                                 <div class="mb-2 text-slate-400">Welcome to Docker Simulator v1.0</div>
-                                <div class="mb-2 text-slate-400">Type a command to execute logic.</div>
-                                <!-- Content appended here -->
                             </div>
                             <div class="mt-2 flex">
                                 <span class="text-green-500 mr-2 font-mono">$</span>
-                                <input type="text" id="terminalInput" class="w-full bg-transparent border-none outline-none font-mono text-slate-800" placeholder="Type docker command..." autocomplete="off">
+                                <input type="text" id="terminalInput" class="w-full bg-transparent border-none outline-none font-mono text-slate-800" placeholder="Type command..." autocomplete="off">
                             </div>
-                        </div>
-
-                        <!-- Important Flags Table -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-slate-600 border border-slate-200 rounded-lg">
-                                <thead class="bg-slate-100 uppercase text-xs">
-                                    <tr>
-                                        <th class="px-4 py-3">Flag</th>
-                                        <th class="px-4 py-3">Purpose</th>
-                                        <th class="px-4 py-3">Example</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b bg-white">
-                                        <td class="px-4 py-3 font-mono text-blue-600">-d</td>
-                                        <td class="px-4 py-3">Detached mode. Runs container in background.</td>
-                                        <td class="px-4 py-3 font-mono">docker run -d nginx</td>
-                                    </tr>
-                                    <tr class="border-b bg-slate-50">
-                                        <td class="px-4 py-3 font-mono text-blue-600">-p</td>
-                                        <td class="px-4 py-3">Port Mapping. <span class="text-slate-400">HOST:CONTAINER</span></td>
-                                        <td class="px-4 py-3 font-mono">docker run -p 8080:80 nginx</td>
-                                    </tr>
-                                    <tr class="border-b bg-white">
-                                        <td class="px-4 py-3 font-mono text-blue-600">--name</td>
-                                        <td class="px-4 py-3">Assign a custom name to the container.</td>
-                                        <td class="px-4 py-3 font-mono">docker run --name my-web nginx</td>
-                                    </tr>
-                                    <tr class="border-b bg-slate-50">
-                                        <td class="px-4 py-3 font-mono text-blue-600">-v</td>
-                                        <td class="px-4 py-3">Volume Mounting. Persist data.</td>
-                                        <td class="px-4 py-3 font-mono">docker run -v /data:/app nginx</td>
-                                    </tr>
-                                    <tr class="border-b bg-white">
-                                        <td class="px-4 py-3 font-mono text-blue-600">-e</td>
-                                        <td class="px-4 py-3">Environment Variables.</td>
-                                        <td class="px-4 py-3 font-mono">docker run -e DB_PASS=secret mysql</td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 `
             },
             volumes: {
-                title: "Data Persistence (Volumes)",
-                summary: "Containers are ephemeral; when deleted, their data is lost. Volumes are used to persist data outside the container lifecycle.",
+                title: "Data Persistence",
+                summary: "Volumes are the preferred mechanism for persisting data generated and used by Docker containers.",
                 details: `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Concepts -->
-                        <div class="space-y-4">
-                             <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                                <h3 class="font-bold text-blue-600 mb-2">3 Types of Storage</h3>
-                                <ul class="list-disc pl-5 space-y-2 text-sm text-slate-600">
-                                    <li><strong class="text-slate-800">Volumes (Recommended):</strong> Managed by Docker <code>/var/lib/docker/volumes/</code>. Best for database storage and persistence.</li>
-                                    <li><strong class="text-slate-800">Bind Mounts:</strong> Maps a file or directory from your Host machine (Desktop) to the Container. Best for <span class="bg-yellow-100 px-1">Development</span> (live code reloading).</li>
-                                    <li><strong class="text-slate-800">Tmpfs:</strong> Stored in host memory. Never written to disk. For sensitive secrets/speed.</li>
-                                </ul>
-                             </div>
-                             <div class="bg-blue-50 p-4 rounded border border-blue-200">
-                                 <h4 class="font-bold text-blue-800 text-sm">Pro Interview Tip</h4>
-                                 <p class="text-xs text-blue-700 mt-1">"How do you persist data if a container crashes?" -> Answer: Use Volumes. The volume lifecycle is independent of the container lifecycle.</p>
-                             </div>
-                        </div>
-
-                        <!-- Visual Representation -->
-                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col items-center justify-center">
-                            <div class="relative w-full max-w-xs aspect-square border-2 border-dashed border-slate-300 rounded flex items-center justify-center bg-slate-50">
-                                <span class="absolute top-2 left-2 text-xs font-bold text-slate-400">Host Machine</span>
-                                
-                                <!-- Volume -->
-                                <div class="absolute bottom-4 right-4 bg-blue-100 border border-blue-400 p-2 rounded w-24 text-center">
-                                    <i class="fa-solid fa-database text-blue-500 block mb-1"></i>
-                                    <span class="text-xs font-bold text-blue-800">Volume</span>
-                                </div>
-
-                                <!-- Container -->
-                                <div class="bg-green-100 border border-green-500 w-32 h-32 rounded flex flex-col items-center justify-center z-10 shadow-lg">
-                                    <i class="fa-brands fa-docker text-green-600 text-3xl mb-1"></i>
-                                    <span class="text-xs font-bold text-green-800">Container</span>
-                                </div>
-
-                                <!-- Connection Line (CSS visualization) -->
-                                <div class="absolute w-20 h-1 bg-blue-300 rotate-45 transform translate-x-8 translate-y-8 z-0"></div>
-                            </div>
-                            <p class="mt-4 text-center text-sm text-slate-500">The Container reads/writes to the Volume. Even if the green box (Container) is destroyed, the blue box (Volume) remains.</p>
-                        </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-blue-600 mb-2">Volumes vs Bind Mounts</h3>
+                        <p class="text-slate-600 text-sm mb-4">Volumes are managed by Docker. Bind mounts depend on the directory structure of the host machine.</p>
                     </div>
                 `
             },
             networks: {
                 title: "Networking",
-                summary: "Docker networking allows containers to talk to each other and the outside world.",
-                details: `
-                    <div class="space-y-6">
-                        <!-- Network Types Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <i class="fa-solid fa-bridge text-blue-500"></i>
-                                    <h4 class="font-bold">Bridge (Default)</h4>
-                                </div>
-                                <p class="text-xs text-slate-600">Private internal network created by Docker. Containers on the same bridge can talk via IP (or name if custom bridge).</p>
-                            </div>
-                            <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <i class="fa-solid fa-server text-purple-500"></i>
-                                    <h4 class="font-bold">Host</h4>
-                                </div>
-                                <p class="text-xs text-slate-600">Removes network isolation. Container uses Host's IP directly. Fast, but potential port conflicts.</p>
-                            </div>
-                            <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <i class="fa-solid fa-ban text-red-500"></i>
-                                    <h4 class="font-bold">None</h4>
-                                </div>
-                                <p class="text-xs text-slate-600">No networking. Complete isolation. Good for batch jobs that calculate and quit without external data.</p>
-                            </div>
-                        </div>
-
-                        <!-- DNS Concept -->
-                        <div class="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-400">
-                            <h3 class="font-bold text-yellow-800 mb-2">Service Discovery (DNS)</h3>
-                            <p class="text-sm text-yellow-800 mb-2">Don't rely on IP addresses! They change.</p>
-                            <p class="text-sm text-yellow-900">
-                                When you create a custom bridge network (<code>docker network create my-net</code>), Docker runs an embedded DNS server. 
-                                Containers can reach each other simply by using their <strong>container name</strong> as the hostname.
-                            </p>
-                            <div class="mt-3 bg-white p-3 rounded text-xs font-mono text-slate-600 border border-yellow-200">
-                                # Example<br>
-                                docker run -d --name <span class="text-blue-600 font-bold">db</span> --network app-net mongo<br>
-                                docker run -d --name web --network app-net node-app<br>
-                                <span class="text-slate-400">// Inside 'web', the connection string is: mongodb://<span class="text-blue-600 font-bold">db</span>:27017</span>
-                            </div>
-                        </div>
-                    </div>
-                `
+                summary: "Docker networking allows containers to communicate with each other and the outside world.",
+                details: `<div class="bg-white p-6 border border-slate-200 rounded-lg"><p class="text-slate-600">Default networks include bridge, host, and none.</p></div>`
             },
             compose: {
                 title: "Docker Compose",
-                summary: "A tool for defining and running multi-container Docker applications using a YAML file.",
-                details: `
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Interactive YAML -->
-                        <div class="bg-slate-900 text-slate-300 p-6 rounded-lg shadow-lg font-mono text-sm">
-                            <h4 class="text-slate-500 uppercase text-xs font-bold mb-4 border-b border-slate-700 pb-2">docker-compose.yml</h4>
-                            
-                            <div class="space-y-1">
-                                <div><span class="yaml-key">version:</span> <span class="yaml-val">'3.8'</span></div>
-                                <div><span class="yaml-key">services:</span></div>
-                                
-                                <!-- Web Service -->
-                                <div class="pl-4 hover:bg-slate-800 rounded cursor-pointer group p-1 transition-colors" onclick="alert('Defines a container named web-app built from current dir.')">
-                                    <span class="yaml-key">web-app:</span> <span class="text-slate-500"><- Service Name</span>
-                                </div>
-                                <div class="pl-8"><span class="yaml-key">build:</span> .</div>
-                                <div class="pl-8"><span class="yaml-key">ports:</span></div>
-                                <div class="pl-12 text-slate-400">- "3000:3000"</div>
-                                <div class="pl-8"><span class="yaml-key">depends_on:</span></div>
-                                <div class="pl-12 text-slate-400">- redis-server</div>
-
-                                <!-- DB Service -->
-                                <div class="pl-4 mt-2 hover:bg-slate-800 rounded cursor-pointer group p-1 transition-colors">
-                                    <span class="yaml-key">redis-server:</span>
-                                </div>
-                                <div class="pl-8"><span class="yaml-key">image:</span> <span class="yaml-val">redis:alpine</span></div>
-                                <div class="pl-8"><span class="yaml-key">volumes:</span></div>
-                                <div class="pl-12 text-slate-400">- redis-data:/data</div>
-                                
-                                <div class="mt-2"><span class="yaml-key">volumes:</span></div>
-                                <div class="pl-4"><span class="yaml-key">redis-data:</span></div>
-                            </div>
-                        </div>
-
-                        <!-- Explainer Panel -->
-                        <div class="space-y-4">
-                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                                <h3 class="font-bold text-blue-600 mb-2">Key Benefits</h3>
-                                <ul class="list-disc pl-5 space-y-2 text-sm text-slate-600">
-                                    <li><strong>Infrastructure as Code:</strong> Entire stack defined in one file.</li>
-                                    <li><strong>Single Command:</strong> <code>docker-compose up -d</code> starts everything.</li>
-                                    <li><strong>Automated Networking:</strong> Creates a default network where services can talk by name.</li>
-                                </ul>
-                            </div>
-
-                            <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                                <h3 class="font-bold text-blue-600 mb-2">Common Commands</h3>
-                                <ul class="space-y-2 text-sm">
-                                    <li class="flex justify-between border-b pb-1">
-                                        <span class="font-mono text-slate-700">docker-compose up -d</span>
-                                        <span class="text-slate-500">Start all services (detached)</span>
-                                    </li>
-                                    <li class="flex justify-between border-b pb-1">
-                                        <span class="font-mono text-slate-700">docker-compose down</span>
-                                        <span class="text-slate-500">Stop & remove containers/nets</span>
-                                    </li>
-                                    <li class="flex justify-between border-b pb-1">
-                                        <span class="font-mono text-slate-700">docker-compose logs -f</span>
-                                        <span class="text-slate-500">Tail logs from all services</span>
-                                    </li>
-                                    <li class="flex justify-between">
-                                        <span class="font-mono text-slate-700">docker-compose build</span>
-                                        <span class="text-slate-500">Rebuild images</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                `
+                summary: "A tool for defining and running multi-container applications using a YAML file.",
+                details: `<div class="bg-slate-900 text-slate-300 p-6 rounded-lg font-mono text-sm"><span class="yaml-key">services:</span><br>&nbsp;&nbsp;<span class="yaml-key">web:</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">image:</span> <span class="yaml-val">nginx</span></div>`
             }
         };
 
-        // --- Core Functions ---
+        let currentTheme = 'light';
+
+        function toggleTheme() {
+            const body = document.body;
+            if (currentTheme === 'light') {
+                body.classList.add('dark-mode');
+                currentTheme = 'dark';
+            } else {
+                body.classList.remove('dark-mode');
+                currentTheme = 'light';
+            }
+            
+            // Re-render chart to ensure colors stay readable if visible
+            const activeNav = document.querySelector('.active-nav');
+            if (activeNav && activeNav.dataset.section === 'intro') {
+                initVMChart();
+            }
+        }
 
         function loadSection(sectionId) {
-            // Update UI State
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-slate-800', 'text-white', 'active-nav');
                 if (btn.dataset.section === sectionId) {
@@ -546,57 +339,56 @@
             const data = courseData[sectionId];
             const contentArea = document.getElementById('content-area');
             
-            // Render Content
             contentArea.innerHTML = `
-                <div class="max-w-5xl mx-auto animation-fade-in">
-                    <!-- Title Section -->
+                <div class="max-w-5xl mx-auto opacity-0 translate-y-4 transition-all duration-500 ease-out" id="section-wrapper">
                     <div class="mb-8">
                         <h2 class="text-3xl font-bold text-slate-800 mb-2">${data.title}</h2>
                         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded text-blue-900">
-                            <span class="font-bold text-xs uppercase tracking-wide opacity-70">Summary</span>
+                            <span class="font-bold text-xs uppercase tracking-wide opacity-70">Context</span>
                             <p class="text-lg">${data.summary}</p>
                         </div>
                     </div>
-
-                    <!-- Details Section -->
-                    <div id="details-view">
-                        ${data.details}
-                    </div>
+                    <div id="details-view">${data.details}</div>
                 </div>
             `;
 
-            // Initialize Charts/Interactions specifically for this section
-            if (sectionId === 'intro') {
-                initVMChart();
-            }
-            if (sectionId === 'containers') {
-                initTerminal();
-            }
+            setTimeout(() => {
+                const wrap = document.getElementById('section-wrapper');
+                wrap.classList.remove('opacity-0', 'translate-y-4');
+                wrap.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            if (sectionId === 'intro') initVMChart();
+            if (sectionId === 'containers') initTerminal();
         }
 
-        // --- Interactive Modules ---
-
+        let vmChartInstance = null;
         function initVMChart() {
-            const ctx = document.getElementById('vmContainerChart');
-            if (!ctx) return;
+            const canvas = document.getElementById('vmContainerChart');
+            if (!canvas) return;
 
-            new Chart(ctx, {
+            if (vmChartInstance) vmChartInstance.destroy();
+
+            const isDark = currentTheme === 'dark';
+            const textColor = isDark ? '#f1f5f9' : '#1e293b';
+
+            vmChartInstance = new Chart(canvas, {
                 type: 'bar',
                 data: {
-                    labels: ['Startup Time (sec)', 'Image Size (MB)', 'Efficiency Score'],
+                    labels: ['Startup Time', 'Image Size', 'Efficiency'],
                     datasets: [
                         {
-                            label: 'Virtual Machine',
-                            data: [60, 2000, 40], // Mock data for comparison
-                            backgroundColor: 'rgba(239, 68, 68, 0.6)',
-                            borderColor: 'rgba(239, 68, 68, 1)',
+                            label: 'VM',
+                            data: [60, 2000, 40],
+                            backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                            borderColor: '#ef4444',
                             borderWidth: 1
                         },
                         {
-                            label: 'Docker Container',
+                            label: 'Container',
                             data: [1, 100, 95],
-                            backgroundColor: 'rgba(16, 185, 129, 0.6)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: '#10b981',
                             borderWidth: 1
                         }
                     ]
@@ -604,23 +396,17 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true }
-                    },
                     plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y;
-                                    }
-                                    return label;
-                                }
-                            }
+                        legend: { labels: { color: textColor } }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: isDark ? '#334155' : '#e2e8f0' },
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                            ticks: { color: textColor }
                         }
                     }
                 }
@@ -630,66 +416,31 @@
         function initTerminal() {
             const input = document.getElementById('terminalInput');
             const output = document.getElementById('terminalOutput');
-
             if (!input) return;
 
             input.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     const cmd = this.value.trim();
                     this.value = '';
+                    const line = document.createElement('div');
+                    line.innerHTML = `<span class="text-green-500">$</span> ${cmd}`;
+                    output.appendChild(line);
 
-                    // Echo command
-                    const cmdLine = document.createElement('div');
-                    cmdLine.innerHTML = `<span class="text-green-500">$</span> ${cmd}`;
-                    output.appendChild(cmdLine);
+                    let res = '';
+                    if (cmd === 'docker run hello-world') res = 'Hello from Docker! Container executed successfully.';
+                    else if (cmd === 'docker ps') res = 'CONTAINER ID   IMAGE     STATUS\n8f9e23...    nginx     Up 2 mins';
+                    else if (cmd) res = `Executing: ${cmd}... done.`;
 
-                    // Process Command
-                    let response = '';
-                    if (cmd === 'docker run hello-world') {
-                        response = `
-                            Hello from Docker!
-                            This message shows that your installation appears to be working correctly.
-                            
-                            To generate this message, Docker took the following steps:
-                             1. The Docker client contacted the Docker daemon.
-                             2. The daemon pulled the "hello-world" image from the Docker Hub.
-                             3. The daemon created a new container from that image which runs the executable that produces the output you are currently reading.
-                             4. The daemon streamed that output to the Docker client, which sent it to your terminal.
-                        `;
-                    } else if (cmd === 'docker ps') {
-                        response = `
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
-                        `;
-                    } else if (cmd === 'docker images') {
-                        response = `
-REPOSITORY    TAG       IMAGE ID       CREATED        SIZE
-node          14        a2b3c4d5e6f7   2 days ago     900MB
-hello-world   latest    feb5d9fea6a5   4 months ago   13.3kB
-                        `;
-                    } else if (cmd.startsWith('docker')) {
-                        response = "Command executed. (Simulation only - try 'docker run hello-world')";
-                    } else {
-                        response = "command not found: " + cmd;
-                    }
-
-                    // Echo Response
                     const respLine = document.createElement('div');
                     respLine.className = "text-slate-300 mb-2 whitespace-pre-wrap text-xs";
-                    respLine.innerText = response;
+                    respLine.innerText = res;
                     output.appendChild(respLine);
-                    
-                    // Scroll to bottom
                     output.scrollTop = output.scrollHeight;
                 }
             });
         }
 
-        // --- Init ---
-        // Load Intro by default
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSection('intro');
-        });
-
+        document.addEventListener('DOMContentLoaded', () => loadSection('intro'));
     </script>
 </body>
 </html>
